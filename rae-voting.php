@@ -36,5 +36,110 @@ function rae_vote() {
 	dbDelta( $sql );
 }
 
+add_action('admin_menu', 'vote_plugin_setup_menu');
+ 
+function vote_plugin_setup_menu(){
+        add_menu_page( 'Voting Page', 'Voting Plugin', 'manage_options', 'vote-plugin', 'vote_init' );
+}
+ 
+function vote_init(){
+        global $wpdb;
+
+		$sqlregion = 'SELECT region, COUNT(*) as total FROM wp_territory_voting GROUP BY region ORDER BY COUNT(*) DESC';
+		$sqltotal = "SELECT region, COUNT(*) as mySum FROM wp_territory_voting";
+		$sqltable = "SELECT * FROM wp_territory_voting";
+
+		$result = $wpdb->get_results($sqlregion) or die(mysql_error());
+		$resulttotal = $wpdb->get_results($sqltotal) or die(mysql_error());
+		$resulttable = $wpdb->get_results($sqltable) or die(mysql_error());
+
+		foreach	( $resulttotal as $row ) {
+			$totalentries = $row->mySum;
+		}
+
+		echo "<h1>Results</h1>";
+
+		foreach( $result as $row ) {
+
+			$region = $row->region . ' ';
+			$total = $row->total . ' ';
+			$percentage = ($total / $totalentries ) * 100 . '%';
+			$percentagerounded = round($percentage, 1) . '% ';
+
+		   	echo "<h3>".$region;
+		   	echo $total;
+		   	echo $percentagerounded."</h3>";
+
+		}
+
+		$viralPeople = "SELECT ref_id, COUNT(*) as total FROM wp_territory_voting GROUP BY ref_id ORDER BY COUNT(*) DESC";
+		$viralttable = $wpdb->get_results($viralPeople) or die(mysql_error());
+
+		foreach( $viralttable as $row ) {
+			$ref_total = $row->total;
+			$ref_id = $row->ref_id;
+
+			echo $ref_id . ' - ';
+			echo $ref_total . ' / ';
+
+		}
+
+		
+
+		echo "<h1>Viral Kings &amp; Queens</h1>";
+		echo "<table>";
+		echo "<tr>";
+	    echo "<td>Name</td>";
+	    echo "<td>Email</td>";
+	    echo "<td>#Signups</td>";
+	    echo "</tr>";
+	    echo "</table>";
+
+		echo "<table>";
+		echo "<tr>";
+	    echo "<td>ID</td>";
+	    echo "<td>Time</td>";
+	    echo "<td>First Name</td>";
+	    echo "<td>Last Name</td>";
+	    echo "<td>Email</td>";
+	    echo "<td>Region</td>";
+	    echo "<td>Country</td>";
+	    echo "<td>Device</td>";
+	    echo "<td>City</td>";
+	    echo "<td>Refer ID</td>";
+	    echo "</tr>";
+
+	    echo "<h1>Sign Up List</h1>";
+	    
+		foreach( $resulttable as $row ) {
+
+			$id = $row->id;
+			$time = $row->time;
+			$first_name = $row->first_name;
+			$last_name = $row->last_name;
+			$email = $row->email;
+			$region = $row->region;
+			$country = $row->country;
+			$device = $row->device;
+			$city = $row->city;
+			$ref_id = $row->ref_id;
+			 
+			echo "<tr>";
+		    echo "<td>".$id."</td>";
+		    echo "<td>".$time."</td>";
+		    echo "<td>".$first_name."</td>";
+		    echo "<td>".$last_name."</td>";
+		    echo "<td>".$email."</td>";
+		    echo "<td>".$region."</td>";
+		    echo "<td>".$country."</td>";
+		    echo "<td>".$device."</td>";
+		    echo "<td>".$city."</td>";
+		    echo "<td>".$ref_id."</td>";
+		    echo "</tr>";
+		}
+
+		echo "</table>";
+}
+
 
 ?>

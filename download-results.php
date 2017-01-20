@@ -4,7 +4,7 @@
 
 	global $wpdb;
 
-	$sqlregion = 'SELECT region, COUNT(*) as total FROM wp_territory_voting GROUP BY region';
+	$sqlregion = 'SELECT region, COUNT(*) as total FROM wp_territory_voting GROUP BY region ORDER BY COUNT(*) DESC';
 	$sqltotal = "SELECT region, COUNT(*) as mySum FROM wp_territory_voting";
 
 	$result = $wpdb->get_results($sqlregion) or die(mysql_error());
@@ -20,7 +20,7 @@
 		$total = $row->total . ' ';
 		$percentage = ($total / $totalentries ) * 100 . '%';
 		$percentagerounded = round($percentage, 1) . '% ';
-
+		
 	   	echo $region;
 	   	echo $total;
 	   	echo $percentagerounded;
