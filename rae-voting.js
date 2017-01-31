@@ -1,3 +1,14 @@
+// Tap country open correct form
+
+$(".vote-btn").on("click", function() {
+    var id = $(this).attr('id');
+    $("#region").val(id);
+    $(".territory-voting .form").toggleClass('active');
+    $("#country").load('../wp-content/plugins/rae-voting/countries/' + id + '.html');
+});
+
+// Form Submit with Validation
+
 $("#rae-vote").submit(function(e) {
     var postData = $(this).serializeArray();
     var formURL = $(this).attr("action");
@@ -16,24 +27,21 @@ $("#rae-vote").submit(function(e) {
         return false;
     }
 
-
-        $.ajax(
+    $.ajax(
+    {
+        url : formURL,
+        type: "POST",
+        data : postData,
+        success:function(data, textStatus, jqXHR) 
         {
-            url : formURL,
-            type: "POST",
-            data : postData,
-            success:function(data, textStatus, jqXHR) 
-            {
-                $(refreshVotes);
-                alert(data);
-            },
-            error: function(jqXHR, textStatus, errorThrown) 
-            {
-       
-            }
-        });
-
-    
+            $(refreshVotes);
+            alert(data);
+        },
+        error: function(jqXHR, textStatus, errorThrown) 
+        {
+   
+        }
+    });
 
     e.preventDefault(); //STOP default action
     e.unbind(); //unbind. to stop multiple form submit.
